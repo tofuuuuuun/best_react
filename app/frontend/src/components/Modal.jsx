@@ -1,7 +1,8 @@
 
 export const Modal = (props) => {
-    const { isOpen, toggleModal, searchArtist, inputArtistName } = props;
+    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, errorMessage } = props;
     const changeFlg = () => toggleModal(false);
+    const noArtistImage = '../../public/images/noimage.png';
     return (
         <>
             {isOpen && (
@@ -31,10 +32,25 @@ export const Modal = (props) => {
                                     <label htmlFor='typeAll' className='l-subButton bg-gray typeAll'>すべて</label>
                                 </form>
                             </div>
+
+                            {responseArtist.length !== 0 && (
+                                <div className='l-autocomplete'>
+                                    <ul className='autocompleteList padding-all-1em'>
+                                        {responseArtist.map((artist, index) => (
+                                            <li className='artistItems action' data-artist_id={artist.id} key={index}>
+                                                <img className='l-searchArtistImage artistImage' src={artist.images[0] ? artist.images[0].url : noArtistImage} loading='lazy' />
+                                                <div className='l-artistInfo'>
+                                                    <span className='searchArtistName font-wb'>{artist.name}</span>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div >
-            )};
+            )}
         </>
     )
-};
+}
