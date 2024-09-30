@@ -6,11 +6,14 @@ export const App = () => {
   const [isStart, setIsSTart] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [artistName, setArtistName] = useState('');
+  const [type, setType] = useState('album');
   const [responseArtist, setResponseArtist] = useState([]);
+  const [responseAlbum, setResponseAlbum] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
   const toggleModal = (toggleFlg) => setIsOpen(toggleFlg);
   const inputArtistName = (event) => setArtistName(event.target.value);
+  const changeType = (typeValue) => setType(typeValue);
 
   const searchArtist = async () => {
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -22,7 +25,6 @@ export const App = () => {
       if (response.ok) {
         const responseData = await response.json();
         setResponseArtist([...responseArtist, ...responseData['items']])
-        // console.log(responseData['items']);
       } else if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -31,6 +33,30 @@ export const App = () => {
       setErrorMessage('アーティスト情報の取得に失敗しました。');
     }
   };
+
+  const searchAlbum = async (artistId, artistName) => {
+    const params = new URLSearchParams({
+      'artistName': artistName,
+      'type': type,
+      'artistId': artistId
+    });
+    try {
+      const response = await fetch(`https://rahi-lab.com/js/ajax/searchSpotify.php?${params}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (response.ok) {
+        const responseAlbumData = await response.json();
+        console.log(responseAlbumData);
+        setResponseAlbum([...responseAlbum, ...responseAlbumData['items']])
+      } else if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('アルバム情報の取得に失敗しました。');
+    }
+  }
 
   return (
     <>
@@ -71,6 +97,10 @@ export const App = () => {
           searchArtist={searchArtist}
           inputArtistName={inputArtistName}
           responseArtist={responseArtist}
+          changeType={changeType}
+          type={type}
+          searchAlbum={searchAlbum}
+          responseAlbum={responseAlbum}
           errorMessage={errorMessage}
         />
       </main>

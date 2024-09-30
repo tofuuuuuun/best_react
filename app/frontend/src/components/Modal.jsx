@@ -1,8 +1,9 @@
 
 export const Modal = (props) => {
-    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, errorMessage } = props;
+    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, errorMessage } = props;
     const changeFlg = () => toggleModal(false);
-    const noArtistImage = '../../public/images/noimage.png';
+    const selectType = (event) => changeType(event.target.value);
+    const noArtistImage = '../../public/images/noImage.png';
     return (
         <>
             {isOpen && (
@@ -24,20 +25,19 @@ export const Modal = (props) => {
                             </div>
                             <div className='ta-left m-bottom-1em'>
                                 <form id='type'>
-                                    <input type='radio' name='typeLabel' id='typeAlbum' value='album' />
+                                    <input type='radio' name='typeLabel' id='typeAlbum' value='album' checked={type === 'album'} onChange={selectType} />
                                     <label htmlFor='typeAlbum' className='l-subButton bg-gray typeAlbum'>アルバム</label>
-                                    <input type='radio' name='typeLabel' id='typeSingleEP' value='single' />
+                                    <input type='radio' name='typeLabel' id='typeSingleEP' value='single' checked={type === 'single'} onChange={selectType} />
                                     <label htmlFor='typeSingleEP' className='l-subButton bg-gray typeSingleEP'>シングルとEP</label>
-                                    <input type='radio' name='typeLabel' id='typeAll' value='all' />
+                                    <input type='radio' name='typeLabel' id='typeAll' value='all' checked={type === 'all'} onChange={selectType} />
                                     <label htmlFor='typeAll' className='l-subButton bg-gray typeAll'>すべて</label>
                                 </form>
                             </div>
-
                             {responseArtist.length !== 0 && (
                                 <div className='l-autocomplete'>
                                     <ul className='autocompleteList padding-all-1em'>
                                         {responseArtist.map((artist, index) => (
-                                            <li className='artistItems action' data-artist_id={artist.id} key={index}>
+                                            <li className='artistItems action' data-artist_id={artist.id} key={index} onClick={() => searchAlbum(artist.id, artist.name)}>
                                                 <img className='l-searchArtistImage artistImage' src={artist.images[0] ? artist.images[0].url : noArtistImage} loading='lazy' />
                                                 <div className='l-artistInfo'>
                                                     <span className='searchArtistName font-wb'>{artist.name}</span>
@@ -46,6 +46,22 @@ export const Modal = (props) => {
                                         ))}
                                     </ul>
                                 </div>
+                            )}
+                            {responseAlbum.length !== 0 && (
+                                <ul className="modal-list">
+                                    {/* ここの繰り返し処理では1回ALLでデータを取得して、それをフィルタリングしたほうがいいんのでは */}
+                                    {responseAlbum.map((album, index) => {
+                                        <li className="albumItems" id="${albumId}" data-name="${albumName}" data-artist="${artistsName}">
+                                            <img className="albumImage" src="${imageItems}" loading="lazy" />
+                                            <div className="l-albumInfo">
+                                                <span className="albumName font-wb">${albumName} (${release})</span>
+                                                <span className="artistsName">${artistsName}</span>
+                                            </div>
+                                            <button className="l-button txt-white ${buttonClass} ${selectClass} action">${buttonText}</button>
+                                        </li>
+                                    })}
+
+                                </ul>
                             )}
                         </div>
                     </div>
