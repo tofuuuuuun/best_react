@@ -48,19 +48,18 @@ export const Modal = (props) => {
                                 </div>
                             )}
                             {responseAlbum.length !== 0 && (
-                                <ul className="modal-list">
+                                <ul className="modalList">
                                     {/* ここの繰り返し処理では1回ALLでデータを取得して、それをフィルタリングしたほうがいいんのでは */}
-                                    {responseAlbum.map((album, index) => {
-                                        <li className="albumItems" key={index} id={album.id} data-name={album.name} data-artist={() => album.artists.map((value) => { return [value['name']] }).join(',')}>
+                                    {responseAlbum.map((album, index) => (
+                                        <li className="albumItems" key={index} id={album.id} data-name={album.name} data-artist={album.artists.map((value) => value.name).join(',')}>
                                             <img className="albumImage" src={album.images.length !== 0 ? album.images[0].url : ''} loading="lazy" />
                                             <div className="l-albumInfo">
                                                 <span className="albumName font-wb">${album.name} ({album.release_date})</span>
-                                                <span className="artistsName">{() => album.artists.map((value) => { return [value['name']] }).join(',')}</span>
+                                                <span className="artistsName">{album.artists.map((value) => value.name).join(',')}</span>
                                             </div>
                                             {/* <button className="l-button txt-white ${buttonClass} ${selectClass} action">{buttonText}</button> */}
                                         </li>
-                                    })}
-
+                                    ))}
                                 </ul>
                             )}
                         </div>
