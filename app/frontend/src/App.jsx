@@ -13,27 +13,40 @@ export const App = () => {
   const [albumArtList, setAlbumArtList] = useState([]);
   const [isCheckedArray, setIsCheckedArray] = useState([]);
 
-  const toggleModal = (toggleFlg) => setIsOpen(toggleFlg);
+  const toggleModal = (toggleFlg) => {
+    setResponseAlbum([]);
+    setIsOpen(toggleFlg);
+  };
   const inputArtistName = (event) => setArtistName(event.target.value);
   const changeType = (typeValue) => setType(typeValue);
   const addAlbumArt = (id, name, image, artist) => {
     if (id === albumArtList.some((value) => value.id)) {
       deleteAlbum(id);
-      console.log('delete!');
     } else {
       const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
       setAlbumArtList(newItem);
     }
   };
   const addIsChecked = (id) => {
-    const newCheckedItems = [...isCheckedArray, { id: id }];
-    setIsCheckedArray(newCheckedItems);
+    setIsCheckedArray((prevCheckedArray) => {
+      const flg = prevCheckedArray.some((value) => value.id === id);
+      if (!flg) {
+        // console.log(`Adding: ${id}`);
+        return [...prevCheckedArray, { id: id }];
+      } else {
+        return prevCheckedArray.filter(value => value.id !== id);
+      }
+    });
   }
   const deleteAlbum = (id) => {
-    setAlbumArtList(setAlbumArtList.filter(album => album.id !== id));
+    const deleteArray = albumArtList.filter(album => album.id !== id);
+    setAlbumArtList(deleteArray);
+    const deleteIsChecked = isCheckedArray.filter(album => album.id !== id);
+    setIsCheckedArray(deleteIsChecked);
   }
 
   const searchArtist = async () => {
+    setResponseArtist([]);
     const params = new URLSearchParams({ 'artistName': artistName });
     try {
       const response = await fetch(`https://rahi-lab.com/js/ajax/searchArtists.php?${params}`, {
@@ -53,6 +66,7 @@ export const App = () => {
   };
 
   const searchAlbum = async (artistId, artistName) => {
+    setResponseAlbum([]);
     setResponseArtist([]);
     const params = new URLSearchParams({
       'artistName': artistName,
@@ -106,7 +120,7 @@ export const App = () => {
                         <img className='l-albumArt m-bottom-05em' src={album.albumArt} />
                         <span className='selectName'>{album.albumName}</span>
                         <span>{album.albumArtist}</span>
-                        <span className='albumRemove'><span className='icon-close'></span></span>
+                        <span className='albumRemove' onClick={() => deleteAlbum(album.id)}><span className='icon-close'></span></span>
                       </li>
                     ))}
                   </ul>
