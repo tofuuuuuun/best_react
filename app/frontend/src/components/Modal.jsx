@@ -1,9 +1,12 @@
+import { useEffect, useState } from 'react'
 
 export const Modal = (props) => {
-    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, buttonText, addAlbumArt, errorMessage } = props;
+    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, addAlbumArt, albumArtList, isCheckedArray, addIsChecked, errorMessage } = props;
+
     const changeFlg = () => toggleModal(false);
     const selectType = (event) => changeType(event.target.value);
     const addAlbumList = (id, name, image, artist) => addAlbumArt(id, name, image, artist)
+    const isChecked = (id) => addIsChecked(id);
 
     const noArtistImage = '../../public/images/noImage.png';
     return (
@@ -50,22 +53,31 @@ export const Modal = (props) => {
                                 </div>
                             )}
                             {responseAlbum.length !== 0 && (
-                                <ul className="modalList">
+                                <ul className='modalList'>
                                     {/* ここの繰り返し処理では1回ALLでデータを取得して、それをフィルタリングしたほうがいいんのでは */}
                                     {responseAlbum.map((album, index) => (
-                                        <li className="albumItems" key={index} id={album.id} data-name={album.name} data-artist={album.artists.map((value) => value.name).join(',')}>
-                                            <img className="albumImage" src={album.images.length !== 0 ? album.images[0].url : ''} loading="lazy" />
-                                            <div className="l-albumInfo">
-                                                <span className="albumName font-wb">${album.name} ({album.release_date})</span>
-                                                <span className="artistsName">{album.artists.map((value) => value.name).join(',')}</span>
+                                        <li className='albumItems' key={index} data-name={album.name} data-artist={album.artists.map((value) => value.name).join(', ')}>
+                                            <img className='albumImage' src={album.images.length !== 0 ? album.images[0].url : ''} loading='lazy' />
+                                            <div className='l-albumInfo'>
+                                                <span className='albumName font-wb'>{album.name} ({album.release_date})</span>
+                                                <span className='artistsName'>{album.artists.map((value) => value.name).join(',')}</span>
                                             </div>
-                                            <button className="l-button txt-white ${buttonClass} ${selectClass} action" onClick={() => addAlbumList(album.id, album.name, album.images.length !== 0 ? album.images[0].url : '', album.artists.map((value) => value.name).join(', '))}>{buttonText}</button>
+                                            <label id={album.id} className={isCheckedArray.some((value) => value.id === album.id) ? 'l-button bg-orange txt-white action ta-center' : 'l-button bg-turquoise txt-white action ta-center'}>
+                                                <input type='checkbox'
+                                                    htmlFor={album.id}
+                                                    className={isCheckedArray.some((value) => value.id === album.id) ? 'selected disp-none' : 'select disp-none'}
+                                                    checked={isCheckedArray.some((value) => value.id === album.id)}
+                                                    onChange={() => {
+                                                        addAlbumList(album.id, album.name, album.images.length !== 0 ? album.images[0].url : '', album.artists.map((value) => value.name).join(', '));
+                                                        isChecked(album.id);
+                                                    }} />{isCheckedArray.some((value) => value.id === album.id) ? '選択中' : '選択'}
+                                            </label>
                                         </li>
                                     ))}
                                 </ul>
                             )}
                         </div>
-                    </div>
+                    </div >
                 </div >
             )}
         </>

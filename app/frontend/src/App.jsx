@@ -10,17 +10,28 @@ export const App = () => {
   const [responseArtist, setResponseArtist] = useState([]);
   const [responseAlbum, setResponseAlbum] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-
   const [albumArtList, setAlbumArtList] = useState([]);
-  const [buttonText, setButtonText] = useState('選択');
+  const [isCheckedArray, setIsCheckedArray] = useState([]);
 
   const toggleModal = (toggleFlg) => setIsOpen(toggleFlg);
   const inputArtistName = (event) => setArtistName(event.target.value);
   const changeType = (typeValue) => setType(typeValue);
   const addAlbumArt = (id, name, image, artist) => {
-    const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
-    setAlbumArtList(newItem);
+    if (id === albumArtList.some((value) => value.id)) {
+      deleteAlbum(id);
+      console.log('delete!');
+    } else {
+      const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
+      setAlbumArtList(newItem);
+    }
   };
+  const addIsChecked = (id) => {
+    const newCheckedItems = [...isCheckedArray, { id: id }];
+    setIsCheckedArray(newCheckedItems);
+  }
+  const deleteAlbum = (id) => {
+    setAlbumArtList(setAlbumArtList.filter(album => album.id !== id));
+  }
 
   const searchArtist = async () => {
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -42,6 +53,7 @@ export const App = () => {
   };
 
   const searchAlbum = async (artistId, artistName) => {
+    setResponseArtist([]);
     const params = new URLSearchParams({
       'artistName': artistName,
       'type': type,
@@ -63,6 +75,7 @@ export const App = () => {
       setErrorMessage('アルバム情報の取得に失敗しました。');
     }
   }
+
 
   return (
     <>
@@ -119,8 +132,10 @@ export const App = () => {
           searchAlbum={searchAlbum}
           responseAlbum={responseAlbum}
           errorMessage={errorMessage}
-          buttonText={buttonText}
           addAlbumArt={addAlbumArt}
+          albumArtList={albumArtList}
+          addIsChecked={addIsChecked}
+          isCheckedArray={isCheckedArray}
         />
       </main >
     </>
