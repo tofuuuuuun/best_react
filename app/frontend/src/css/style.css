@@ -126,8 +126,8 @@ input { padding: 0.5em; border-radius: 0; border: 1px solid #cacaca; }
 .l-autocomplete{
     position: absolute;
     width: 50%; 
-    left: 96px;
-    top: 45px;
+    left: 30px;
+    top: 60px;
 }
 
 .l-searchArtistImage{

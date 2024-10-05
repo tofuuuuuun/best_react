@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from './components/modal';
 import { Header } from './common/Header';
 
@@ -11,9 +11,16 @@ export const App = () => {
   const [responseAlbum, setResponseAlbum] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [albumArtList, setAlbumArtList] = useState([]);
+  const [buttonText, setButtonText] = useState('選択');
+
   const toggleModal = (toggleFlg) => setIsOpen(toggleFlg);
   const inputArtistName = (event) => setArtistName(event.target.value);
   const changeType = (typeValue) => setType(typeValue);
+  const addAlbumArt = (id, name, image, artist) => {
+    const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
+    setAlbumArtList(newItem);
+  };
 
   const searchArtist = async () => {
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -24,7 +31,7 @@ export const App = () => {
       });
       if (response.ok) {
         const responseData = await response.json();
-        setResponseArtist([...responseArtist, ...responseData['items']])
+        setResponseArtist([...responseArtist, ...responseData['items']]);
       } else if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -47,8 +54,7 @@ export const App = () => {
       });
       if (response.ok) {
         const responseAlbumData = await response.json();
-        console.log(responseAlbumData);
-        setResponseAlbum([...responseAlbum, ...responseAlbumData['items']])
+        setResponseAlbum([...responseAlbum, ...responseAlbumData['items']]);
       } else if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -80,7 +86,18 @@ export const App = () => {
             )}
             {isStart && (
               <div className='l-albumList l-common'>
-                <ul className='albumArtList' id='target'></ul>
+                {albumArtList.length != 0 && (
+                  <ul className='albumArtList' id='target'>
+                    {albumArtList.map((album, index) => (
+                      <li className='albumListItem action' id={album.id} key={index} >
+                        <img className='l-albumArt m-bottom-05em' src={album.albumArt} />
+                        <span className='selectName'>{album.albumName}</span>
+                        <span>{album.albumArtist}</span>
+                        <span className='albumRemove'><span className='icon-close'></span></span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 <div className='albumAddButton'>
                   <div className='l-albumArt albumAddButton addButton action disp-block' onClick={() => setIsOpen(!isOpen)}>
                     <span className='icon-add'></span>
@@ -102,8 +119,10 @@ export const App = () => {
           searchAlbum={searchAlbum}
           responseAlbum={responseAlbum}
           errorMessage={errorMessage}
+          buttonText={buttonText}
+          addAlbumArt={addAlbumArt}
         />
-      </main>
+      </main >
     </>
   )
 }

@@ -1,8 +1,10 @@
 
 export const Modal = (props) => {
-    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, errorMessage } = props;
+    const { isOpen, toggleModal, searchArtist, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, buttonText, addAlbumArt, errorMessage } = props;
     const changeFlg = () => toggleModal(false);
     const selectType = (event) => changeType(event.target.value);
+    const addAlbumList = (id, name, image, artist) => addAlbumArt(id, name, image, artist)
+
     const noArtistImage = '../../public/images/noImage.png';
     return (
         <>
@@ -57,7 +59,7 @@ export const Modal = (props) => {
                                                 <span className="albumName font-wb">${album.name} ({album.release_date})</span>
                                                 <span className="artistsName">{album.artists.map((value) => value.name).join(',')}</span>
                                             </div>
-                                            {/* <button className="l-button txt-white ${buttonClass} ${selectClass} action">{buttonText}</button> */}
+                                            <button className="l-button txt-white ${buttonClass} ${selectClass} action" onClick={() => addAlbumList(album.id, album.name, album.images.length !== 0 ? album.images[0].url : '', album.artists.map((value) => value.name).join(', '))}>{buttonText}</button>
                                         </li>
                                     ))}
                                 </ul>
