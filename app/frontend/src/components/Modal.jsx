@@ -20,7 +20,7 @@ export const Modal = (props) => {
                                     <div className='clear' onClick={() => clearInput()}><span className='icon-close'></span></div>
                                 </div>
                                 <div className='l-autocomplete'></div>
-                                <div className='p-left-05em'>
+                                <div className='p-left-1em'>
                                     <button className='l-buttonSearch txt-white bg-turquoise search action' onClick={searchAlbum}>
                                         <img src='../../public/images/search.png' alt='searchIcon' width='15' />
                                     </button>
@@ -29,9 +29,9 @@ export const Modal = (props) => {
                             <div className='ta-left m-bottom-1em'>
                                 <form id='type'>
                                     <input type='radio' name='typeLabel' id='typeAlbum' value='album' checked={type === 'album'} onChange={selectType} />
-                                    <label htmlFor='typeAlbum' className='l-subButton bg-gray typeAlbum'>アルバム</label>
+                                    <label htmlFor='typeAlbum' className='l-subButton bg-gray typeAlbum m-right-05em'>アルバム</label>
                                     <input type='radio' name='typeLabel' id='typeSingleEP' value='single' checked={type === 'single'} onChange={selectType} />
-                                    <label htmlFor='typeSingleEP' className='l-subButton bg-gray typeSingleEP'>シングルとEP</label>
+                                    <label htmlFor='typeSingleEP' className='l-subButton bg-gray typeSingleEP m-right-05em'>シングルとEP</label>
                                     <input type='radio' name='typeLabel' id='typeAll' value='all' checked={type === 'all'} onChange={selectType} />
                                     <label htmlFor='typeAll' className='l-subButton bg-gray typeAll'>すべて</label>
                                 </form>

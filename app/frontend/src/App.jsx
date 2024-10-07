@@ -77,6 +77,11 @@ export const App = () => {
     setResponseAlbum([]);
   }
 
+  const clearAlbumList = () => {
+    setAlbumArtList([]);
+    setAddButtonFlg(true);
+  }
+
   const searchArtist = async (artistName) => {
     setResponseArtist([]);
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -172,7 +177,7 @@ export const App = () => {
           {resetButtonFlg && (
             <div className='resetArea m-top-1em'>
               <div className='resetWrapper ta-center'>
-                <button className='l-button action m-right-1em txt-white bg-turquoise reset action'>
+                <button className='l-button action m-right-1em txt-white bg-turquoise reset action' onClick={clearAlbumList}>
                   <img src='../images/rotate.png' alt='resetIcon' />
                 </button>
                 <button className='l-button txt-white bg-turquoise capture action'>
