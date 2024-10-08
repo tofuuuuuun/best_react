@@ -1,8 +1,9 @@
+import { useState } from 'react'
 export const Modal = (props) => {
-    const { isOpen, toggleModal, searchArtist, artistName, inputArtistName, responseArtist, changeType, type, searchAlbum, responseAlbum, addAlbumArt, albumArtList, isCheckedArray, addIsChecked, clearInput, errorMessage } = props;
+    const { isOpen, toggleModal, searchArtist, artistName, inputArtistName, responseArtist, searchAlbum, responseAlbum, addAlbumArt, albumArtList, isCheckedArray, addIsChecked, clearInput, errorMessage } = props;
+    const [type, setType] = useState('album');
 
     const changeFlg = () => toggleModal(false);
-    const selectType = (event) => changeType(event.target.value);
     const addAlbumList = (id, name, image, artist) => { addAlbumArt(id, name, image, artist); }
     const isChecked = (id) => addIsChecked(id);
 
@@ -21,21 +22,26 @@ export const Modal = (props) => {
                                 </div>
                                 <div className='l-autocomplete'></div>
                                 <div className='p-left-1em'>
-                                    <button className='l-buttonSearch txt-white bg-turquoise search action' onClick={searchAlbum}>
+                                    <button className='l-buttonSearch txt-white bg-turquoise search action' onClick={() => searchArtist(artistName)}>
                                         <img src='../../public/images/search.png' alt='searchIcon' width='15' />
                                     </button>
                                 </div>
                             </div>
                             <div className='ta-left m-bottom-1em'>
                                 <form id='type'>
-                                    <input type='radio' name='typeLabel' id='typeAlbum' value='album' checked={type === 'album'} onChange={selectType} />
+                                    <input type='radio' name='typeLabel' id='typeAlbum' value='album' checked={type === 'album'} onChange={() => setType('album')} />
                                     <label htmlFor='typeAlbum' className='l-subButton bg-gray typeAlbum m-right-05em'>アルバム</label>
-                                    <input type='radio' name='typeLabel' id='typeSingleEP' value='single' checked={type === 'single'} onChange={selectType} />
+                                    <input type='radio' name='typeLabel' id='typeSingleEP' value='single' checked={type === 'single'} onChange={() => setType('single')} />
                                     <label htmlFor='typeSingleEP' className='l-subButton bg-gray typeSingleEP m-right-05em'>シングルとEP</label>
-                                    <input type='radio' name='typeLabel' id='typeAll' value='all' checked={type === 'all'} onChange={selectType} />
+                                    <input type='radio' name='typeLabel' id='typeAll' value='all' checked={type === 'all'} onChange={() => setType('all')} />
                                     <label htmlFor='typeAll' className='l-subButton bg-gray typeAll'>すべて</label>
                                 </form>
                             </div>
+                            {errorMessage && (
+                                <>
+                                    <div>{errorMessage}</div>
+                                </>
+                            )}
                             {responseArtist.length !== 0 && (
                                 <div className='l-autocomplete'>
                                     <ul className='autocompleteList padding-all-1em'>

@@ -7,7 +7,7 @@ export const App = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [addButtonFlg, setAddButtonFlg] = useState(false);
   const [artistName, setArtistName] = useState('');
-  const [type, setType] = useState('album');
+
   const [responseArtist, setResponseArtist] = useState([]);
   const [responseAlbum, setResponseAlbum] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
@@ -26,7 +26,7 @@ export const App = () => {
     searchArtist(value);
   }
 
-  const changeType = (typeValue) => setType(typeValue);
+
   const addAlbumArt = (id, name, image, artist) => {
     console.log('length:' + albumArtList.length);
     if (id === albumArtList.some((value) => value.id)) {
@@ -193,8 +193,6 @@ export const App = () => {
           searchArtist={searchArtist}
           inputArtistName={inputArtistName}
           responseArtist={responseArtist}
-          changeType={changeType}
-          type={type}
           searchAlbum={searchAlbum}
           responseAlbum={responseAlbum}
           errorMessage={errorMessage}
