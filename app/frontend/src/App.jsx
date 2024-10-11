@@ -7,9 +7,10 @@ export const App = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [addButtonFlg, setAddButtonFlg] = useState(false);
   const [artistName, setArtistName] = useState('');
-
+  const [type, setType] = useState('all');
   const [responseArtist, setResponseArtist] = useState([]);
   const [responseAlbum, setResponseAlbum] = useState([]);
+  const [filterResponseAlbum, setFilterResponseAlbum] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [albumArtList, setAlbumArtList] = useState([]);
   const [isCheckedArray, setIsCheckedArray] = useState([]);
@@ -26,7 +27,17 @@ export const App = () => {
     searchArtist(value);
   }
 
-
+  const changeType = (typeValue) => {
+    console.log(typeValue)
+    setType(typeValue);
+    if (typeValue != 'all') {
+      const filtered = responseAlbum.filter(album => album.album_type === typeValue);
+      setFilterResponseAlbum([]);
+      setFilterResponseAlbum(filtered);
+    } else {
+      setFilterResponseAlbum(responseAlbum);
+    }
+  };
   const addAlbumArt = (id, name, image, artist) => {
     console.log('length:' + albumArtList.length);
     if (id === albumArtList.some((value) => value.id)) {
@@ -102,11 +113,12 @@ export const App = () => {
     }
   };
 
-  const searchAlbum = async (artistId, artistName) => {
+  const searchAlbum = async (artistId, name) => {
     setResponseArtist([]);
     setResponseAlbum([]);
+    setFilterResponseAlbum([]);
     const params = new URLSearchParams({
-      'artistName': artistName,
+      'artistName': name,
       'type': type,
       'artistId': artistId
     });
@@ -118,6 +130,7 @@ export const App = () => {
       if (response.ok) {
         const responseAlbumData = await response.json();
         setResponseAlbum((prevAlbum) => [...prevAlbum, ...responseAlbumData['items']]);
+        setFilterResponseAlbum((prevAlbum) => [...prevAlbum, ...responseAlbumData['items']]);
       } else if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -126,6 +139,7 @@ export const App = () => {
       setErrorMessage('アルバム情報の取得に失敗しました。');
     }
   }
+
 
   return (
     <>
@@ -192,9 +206,12 @@ export const App = () => {
           toggleModal={toggleModal}
           searchArtist={searchArtist}
           inputArtistName={inputArtistName}
+          changeType={changeType}
+          type={type}
           responseArtist={responseArtist}
           searchAlbum={searchAlbum}
           responseAlbum={responseAlbum}
+          filterResponseAlbum={filterResponseAlbum}
           errorMessage={errorMessage}
           addAlbumArt={addAlbumArt}
           albumArtList={albumArtList}
