@@ -16,7 +16,6 @@ export const App = () => {
   const [isCheckedArray, setIsCheckedArray] = useState([]);
   const [resetButtonFlg, setResetButtonFlg] = useState(false);
 
-
   const start = () => { setIsSTart(!isOpen); setAddButtonFlg(true); }
   const toggleModal = (toggleFlg) => {
     setResponseAlbum([]);
@@ -24,10 +23,9 @@ export const App = () => {
   }
   const inputArtistName = (event) => {
     const value = event.target.value;
-    setArtistName(value)
+    setArtistName(value);
     searchArtist(value);
   }
-
   const changeType = (typeValue) => {
     setType(typeValue);
     if (typeValue != 'all') {
@@ -42,7 +40,6 @@ export const App = () => {
   };
   const addAlbumArt = (id, name, image, artist) => {
     if (id === albumArtList.some((value) => value.id)) {
-      // 同じものが選ばれた場合選択状態を解除
       deleteAlbum(id);
     } else {
       const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
@@ -78,20 +75,17 @@ export const App = () => {
       setFilterResponseAlbum([]);
     }
   }
-
   const clearInput = () => {
     setArtistName('');
     setResponseArtist([]);
     setResponseAlbum([]);
   }
-
   const clearAlbumList = () => {
     setAlbumArtList([]);
     setFilterResponseAlbum([]);
     setAddButtonFlg(true);
     setResetButtonFlg(false);
   }
-
   const searchArtist = async (artistName) => {
     setResponseArtist([]);
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -111,7 +105,6 @@ export const App = () => {
       setErrorMessage('アーティスト情報の取得に失敗しました。');
     }
   };
-
   const searchAlbum = async (artistId, name) => {
     setResponseArtist([]);
     setResponseAlbum([]);
@@ -138,13 +131,45 @@ export const App = () => {
       setErrorMessage('アルバム情報の取得に失敗しました。');
     }
   }
-
+  const handleCapture = () => {
+    html2canvas(document.querySelector('.l-contentWrapper'), {
+      useCORS: true
+    }).then(canvas => {
+      var dataURL = canvas.toDataURL("image/png");
+      const blob = toBlob(dataURL);
+      const imageFile = new File([blob], "image.png", {
+        type: "image/png",
+      });
+      navigator.share({
+        text: "共有",
+        files: [imageFile],
+      }).then(() => {
+        console.log("success.");
+      }).catch((error) => {
+        console.log(error);
+      });
+    });
+  }
+  const toBlob = (base64) => {
+    const decodedData = atob(base64.replace(/^.*,/, ""));
+    const buffers = new Uint8Array(decodedData.length);
+    for (let i = 0; i < decodedData.length; i++) {
+      buffers[i] = decodedData.charCodeAt(i);
+    }
+    try {
+      const blob = new Blob([buffers.buffer], {
+        type: "image/png",
+      });
+      return blob;
+    } catch (e) {
+      return null;
+    }
+  }
   useEffect(() => {
     if (albumArtList.length === 10) {
       setResetButtonFlg(true);
       setAddButtonFlg(false);
       setIsOpen(false);
-      console.log("アルバムが10個選択されました。");
     }
   }, [albumArtList]);
 
@@ -190,7 +215,6 @@ export const App = () => {
                         </li>
                       ))}
                     </ul>
-
                   </div>
                 )}
               </>
@@ -202,7 +226,7 @@ export const App = () => {
                 <button className='l-button action m-right-1em txt-white bg-turquoise reset action' onClick={clearAlbumList}>
                   <img src='../images/rotate.png' alt='resetIcon' />
                 </button>
-                <button className='l-button txt-white bg-turquoise capture action'>
+                <button className='l-button txt-white bg-turquoise capture action' onClick={handleCapture}>
                   <img src='../images/camera.png' alt='cameraIcon' />
                 </button>
               </div>
