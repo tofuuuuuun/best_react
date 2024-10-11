@@ -16,6 +16,7 @@ export const App = () => {
   const [isCheckedArray, setIsCheckedArray] = useState([]);
   const [resetButtonFlg, setResetButtonFlg] = useState(false);
 
+
   const start = () => { setIsSTart(!isOpen); setAddButtonFlg(true); }
   const toggleModal = (toggleFlg) => {
     setResponseAlbum([]);
@@ -28,29 +29,24 @@ export const App = () => {
   }
 
   const changeType = (typeValue) => {
-    console.log(typeValue)
     setType(typeValue);
     if (typeValue != 'all') {
       const filtered = responseAlbum.filter(album => album.album_type === typeValue);
+      scroll.scrollToTop();
       setFilterResponseAlbum([]);
       setFilterResponseAlbum(filtered);
     } else {
+      scroll.scrollToTop();
       setFilterResponseAlbum(responseAlbum);
     }
   };
   const addAlbumArt = (id, name, image, artist) => {
-    console.log('length:' + albumArtList.length);
     if (id === albumArtList.some((value) => value.id)) {
       // 同じものが選ばれた場合選択状態を解除
       deleteAlbum(id);
     } else {
       const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
       setAlbumArtList(newItem);
-      if (albumArtList.length - 1 === 10) {
-        setResetButtonFlg(true);
-        setAddButtonFlg(false);
-        setIsOpen(false);
-      }
     }
   };
   const addIsChecked = (id) => {
@@ -76,9 +72,10 @@ export const App = () => {
     const deleteIsChecked = isCheckedArray.filter(album => album.id !== id);
     setIsCheckedArray(deleteIsChecked);
     setResetButtonFlg(false);
-    if (albumArtList.length < 10) {
+    if (albumArtList.length <= 10) {
       setResetButtonFlg(false);
       setAddButtonFlg(true);
+      setFilterResponseAlbum([]);
     }
   }
 
@@ -90,7 +87,9 @@ export const App = () => {
 
   const clearAlbumList = () => {
     setAlbumArtList([]);
+    setFilterResponseAlbum([]);
     setAddButtonFlg(true);
+    setResetButtonFlg(false);
   }
 
   const searchArtist = async (artistName) => {
@@ -139,6 +138,15 @@ export const App = () => {
       setErrorMessage('アルバム情報の取得に失敗しました。');
     }
   }
+
+  useEffect(() => {
+    if (albumArtList.length === 10) {
+      setResetButtonFlg(true);
+      setAddButtonFlg(false);
+      setIsOpen(false);
+      console.log("アルバムが10個選択されました。");
+    }
+  }, [albumArtList]);
 
 
   return (
