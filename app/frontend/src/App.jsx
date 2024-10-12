@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Modal } from './components/modal';
 import { Header } from './common/Header';
 
 export const App = () => {
-  const [isStart, setIsSTart] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isStart, setIsStart] = useState(false);
+  const [isModalOpen, setModalIsOpen] = useState(false);
   const [addButtonFlg, setAddButtonFlg] = useState(false);
   const [artistName, setArtistName] = useState('');
   const [type, setType] = useState('all');
@@ -16,28 +16,38 @@ export const App = () => {
   const [isCheckedArray, setIsCheckedArray] = useState([]);
   const [resetButtonFlg, setResetButtonFlg] = useState(false);
 
-  const start = () => { setIsSTart(!isOpen); setAddButtonFlg(true); }
-  const toggleModal = (toggleFlg) => {
-    setResponseAlbum([]);
-    setIsOpen(toggleFlg);
+  const start = () => {
+    setIsStart(!isModalOpen);
+    setAddButtonFlg(true);
   }
+  const toggleModal = (toggleFlg) => {
+    clearInput();
+    setModalIsOpen(toggleFlg);
+  }
+
   const inputArtistName = (event) => {
     const value = event.target.value;
     setArtistName(value);
     searchArtist(value);
   }
+
   const changeType = (typeValue) => {
     setType(typeValue);
     if (typeValue != 'all') {
       const filtered = responseAlbum.filter(album => album.album_type === typeValue);
-      scroll.scrollToTop();
       setFilterResponseAlbum([]);
       setFilterResponseAlbum(filtered);
     } else {
-      scroll.scrollToTop();
       setFilterResponseAlbum(responseAlbum);
     }
+    scrollTop();
   };
+
+  const scrollTop = () => {
+    const modalWindow = document.getElementById('firstItems');
+    modalWindow.scrollIntoView(true);
+  }
+
   const addAlbumArt = (id, name, image, artist) => {
     if (id === albumArtList.some((value) => value.id)) {
       deleteAlbum(id);
@@ -46,6 +56,7 @@ export const App = () => {
       setAlbumArtList(newItem);
     }
   };
+
   const addIsChecked = (id) => {
     setIsCheckedArray((prevCheckedArray) => {
       // すでに登録されているIDの場合配列から削除して一覧からも削除
@@ -63,6 +74,7 @@ export const App = () => {
       }
     });
   }
+
   const deleteAlbum = (id) => {
     const deleteArray = albumArtList.filter(album => album.id !== id);
     setAlbumArtList(deleteArray);
@@ -78,14 +90,20 @@ export const App = () => {
   const clearInput = () => {
     setArtistName('');
     setResponseArtist([]);
-    setResponseAlbum([]);
+    clearSearchResult();
   }
-  const clearAlbumList = () => {
+
+  const clearSearchResult = () => {
     setAlbumArtList([]);
     setFilterResponseAlbum([]);
+  }
+
+  const clearAlbumList = () => {
+    clearSearchResult();
     setAddButtonFlg(true);
     setResetButtonFlg(false);
   }
+
   const searchArtist = async (artistName) => {
     setResponseArtist([]);
     const params = new URLSearchParams({ 'artistName': artistName });
@@ -105,10 +123,10 @@ export const App = () => {
       setErrorMessage('アーティスト情報の取得に失敗しました。');
     }
   };
+
   const searchAlbum = async (artistId, name) => {
     setResponseArtist([]);
-    setResponseAlbum([]);
-    setFilterResponseAlbum([]);
+    clearSearchResult();
     const params = new URLSearchParams({
       'artistName': name,
       'type': type,
@@ -131,6 +149,7 @@ export const App = () => {
       setErrorMessage('アルバム情報の取得に失敗しました。');
     }
   }
+
   const handleCapture = () => {
     html2canvas(document.querySelector('.l-contentWrapper'), {
       useCORS: true
@@ -150,6 +169,7 @@ export const App = () => {
       });
     });
   }
+
   const toBlob = (base64) => {
     const decodedData = atob(base64.replace(/^.*,/, ""));
     const buffers = new Uint8Array(decodedData.length);
@@ -165,6 +185,7 @@ export const App = () => {
       return null;
     }
   }
+
   useEffect(() => {
     if (albumArtList.length === 10) {
       setResetButtonFlg(true);
@@ -196,7 +217,7 @@ export const App = () => {
             )}
             {addButtonFlg && (
               <div className='albumAddButton'>
-                <div className='l-albumArt albumAddButton addButton action' onClick={() => { setIsOpen(!isOpen) }}>
+                <div className='l-albumArt albumAddButton addButton action' onClick={() => { setModalIsOpen(!isModalOpen) }}>
                   <span className='icon-add'></span>
                 </div>
               </div>
@@ -234,7 +255,7 @@ export const App = () => {
           )}
         </div>
         <Modal
-          isOpen={isOpen}
+          isModalOpen={isModalOpen}
           toggleModal={toggleModal}
           searchArtist={searchArtist}
           inputArtistName={inputArtistName}

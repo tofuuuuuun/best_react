@@ -1,6 +1,6 @@
 import { useState } from 'react'
 export const Modal = (props) => {
-    const { isOpen, toggleModal, changeType, type, searchArtist, artistName, inputArtistName, responseArtist, searchAlbum, responseAlbum, filteringAlbumData, filterResponseAlbum, addAlbumArt, albumArtList, isCheckedArray, addIsChecked, clearInput, errorMessage } = props;
+    const { isModalOpen, toggleModal, changeType, type, searchArtist, artistName, inputArtistName, responseArtist, searchAlbum, filteringAlbumData, filterResponseAlbum, addAlbumArt, isCheckedArray, addIsChecked, clearInput, errorMessage } = props;
 
     const selectType = (event) => changeType(event.target.value);
     const changeFlg = () => toggleModal(false);
@@ -10,7 +10,7 @@ export const Modal = (props) => {
     const noArtistImage = '../../public/images/noImage.png';
     return (
         <>
-            {isOpen && (
+            {isModalOpen && (
                 <div className='modal-container'>
                     <div className='modal-body'>
                         <div className='modal-close' onClick={changeFlg}><span className='icon-close'></span></div>
@@ -61,7 +61,7 @@ export const Modal = (props) => {
                                         </div>
                                         <ul className='modalList'>
                                             {filterResponseAlbum.map((album, index) => (
-                                                <li className='albumItems' key={index} data-name={album.name} data-artist={album.artists.map((value) => value.name).join(', ')}>
+                                                <li className='albumItems' id={index === 0 ? 'firstItems' : ''} key={index} data-name={album.name} data-artist={album.artists.map((value) => value.name).join(', ')}>
                                                     <img className='albumImage' src={album.images.length !== 0 ? album.images[0].url : ''} loading='lazy' />
                                                     <div className='l-albumInfo'>
                                                         <span className='albumName font-wb'>{album.name} ({album.release_date.substring(0, 4)})</span>
