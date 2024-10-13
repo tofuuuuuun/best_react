@@ -3,6 +3,8 @@ import { Modal } from './components/modal';
 import { Header } from './common/Header';
 import { Introduction } from './components/Introduction';
 import { AddButton } from './components/AddButton';
+import { AlbumArtList } from './components/AlbumartList';
+import { ResetArea } from './components/ResetArea';
 
 export const App = () => {
   const [isStart, setIsStart] = useState(false);
@@ -24,7 +26,7 @@ export const App = () => {
   }
 
   const toggleModal = (toggleFlg) => {
-    clearInput();
+    clearModal();
     setModalIsOpen(toggleFlg);
   }
 
@@ -108,19 +110,17 @@ export const App = () => {
       setFilterResponseAlbum([]);
     }
   }
-  const clearInput = () => {
+
+  const clearModal = () => {
     setArtistName('');
     setResponseArtist([]);
-    clearSearchResult();
-  }
-
-  const clearSearchResult = () => {
-    setAlbumArtList([]);
     setFilterResponseAlbum([]);
   }
 
-  const clearAlbumList = () => {
-    clearSearchResult();
+  const resetAlbumList = () => {
+    clearModal();
+    setAlbumArtList([]);
+    setIsCheckedArray([])
     setAddButtonFlg(true);
     setResetButtonFlg(false);
   }
@@ -147,7 +147,7 @@ export const App = () => {
 
   const searchAlbum = async (artistId, name) => {
     setResponseArtist([]);
-    clearSearchResult();
+    setFilterResponseAlbum([]);
     const params = new URLSearchParams({
       'artistName': name,
       'type': type,
@@ -211,7 +211,7 @@ export const App = () => {
     if (albumArtList.length === 10) {
       setResetButtonFlg(true);
       setAddButtonFlg(false);
-      setIsOpen(false);
+      setModalIsOpen(false);
     }
   }, [albumArtList]);
 
@@ -231,37 +231,17 @@ export const App = () => {
               isModalOpen={isModalOpen}
               setModalIsOpen={setModalIsOpen}
             />
-            {isStart && (
-              <>
-                {albumArtList.length != 0 && (
-                  <div className='l-albumList l-common'>
-                    <ul className='albumArtList' id='target'>
-                      {albumArtList.map((album, index) => (
-                        <li className='albumListItem action' id={album.id} key={index} >
-                          <img className='l-albumArt m-bottom-05em' src={album.albumArt} />
-                          <span className='selectName'>{album.albumName}</span>
-                          <span>{album.albumArtist}</span>
-                          <span className='albumRemove' onClick={() => deleteAlbum(album.id)}><span className='icon-close'></span></span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
-            )}
+            <AlbumArtList
+              isStart={isStart}
+              albumArtList={albumArtList}
+              deleteAlbum={deleteAlbum}
+            />
           </div>
-          {resetButtonFlg && (
-            <div className='resetArea m-top-1em'>
-              <div className='resetWrapper ta-center'>
-                <button className='l-button action m-right-1em txt-white bg-turquoise reset action' onClick={clearAlbumList}>
-                  <img src='../images/rotate.png' alt='resetIcon' />
-                </button>
-                <button className='l-button txt-white bg-turquoise capture action' onClick={handleCapture}>
-                  <img src='../images/camera.png' alt='cameraIcon' />
-                </button>
-              </div>
-            </div>
-          )}
+          <ResetArea
+            resetButtonFlg={resetButtonFlg}
+            resetAlbumList={resetAlbumList}
+            handleCapture={handleCapture}
+          />
         </div>
         <Modal
           isModalOpen={isModalOpen}
@@ -279,7 +259,7 @@ export const App = () => {
           albumArtList={albumArtList}
           addIsChecked={addIsChecked}
           isCheckedArray={isCheckedArray}
-          clearInput={clearInput}
+          clearModal={clearModal}
           artistName={artistName}
         />
       </main >

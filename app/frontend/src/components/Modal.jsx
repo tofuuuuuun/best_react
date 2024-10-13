@@ -1,6 +1,6 @@
 import { useState } from 'react'
 export const Modal = (props) => {
-    const { isModalOpen, toggleModal, changeType, type, searchArtist, artistName, inputArtistName, responseArtist, searchAlbum, filteringAlbumData, filterResponseAlbum, addAlbumArt, isCheckedArray, addIsChecked, clearInput, errorMessage } = props;
+    const { isModalOpen, toggleModal, changeType, type, searchArtist, artistName, inputArtistName, responseArtist, searchAlbum, filteringAlbumData, filterResponseAlbum, addAlbumArt, isCheckedArray, addIsChecked, clearModal, errorMessage } = props;
 
     const selectType = (event) => changeType(event.target.value);
     const changeFlg = () => toggleModal(false);
@@ -18,7 +18,7 @@ export const Modal = (props) => {
                             <div className='l-searchForm ta-left'>
                                 <div className='l-selectType'>
                                     <input type='text' name='artist' id='artistName' placeholder='アーティスト名' data-artist_id='' value={artistName} onChange={inputArtistName} />
-                                    <div className='clear' onClick={() => clearInput()}><span className='icon-close'></span></div>
+                                    <div className='clear' onClick={() => clearModal()}><span className='icon-close'></span></div>
                                 </div>
                                 <div className='l-autocomplete'></div>
                                 <div className='p-left-1em'>
