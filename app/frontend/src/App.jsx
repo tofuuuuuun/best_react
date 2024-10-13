@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useCallback, useState } from 'react'
 import { Modal } from './components/modal';
 import { Header } from './common/Header';
 
@@ -20,15 +20,34 @@ export const App = () => {
     setIsStart(!isModalOpen);
     setAddButtonFlg(true);
   }
+
   const toggleModal = (toggleFlg) => {
     clearInput();
     setModalIsOpen(toggleFlg);
   }
 
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  const debounceSearch = useCallback(
+    debounce((name) => {
+      if (name) {
+        searchArtist(name);
+      }
+    }, 500),
+    []
+  );
+
   const inputArtistName = (event) => {
-    const value = event.target.value;
-    setArtistName(value);
-    searchArtist(value);
+    setArtistName(event.target.value);
+    debounceSearch(event.target.value);
   }
 
   const changeType = (typeValue) => {
