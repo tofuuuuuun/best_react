@@ -60,8 +60,10 @@ export const App = () => {
       const filtered = responseAlbum.filter(album => album.album_type === typeValue);
       setFilterResponseAlbum([]);
       setFilterResponseAlbum(filtered);
+      console.log(filtered);
     } else {
       setFilterResponseAlbum(responseAlbum);
+      console.log('66行目にはいった')
     }
     scrollTop();
   };
@@ -147,12 +149,15 @@ export const App = () => {
 
   const searchAlbum = async (artistId, name) => {
     setResponseArtist([]);
+    setResponseAlbum([]);
     setFilterResponseAlbum([]);
+    setType('all');
     const params = new URLSearchParams({
       'artistName': name,
-      'type': type,
+      'type': 'all',
       'artistId': artistId
     });
+    // TODO: サーバー側の実装もallメインで使用することを考慮した実装に修正する
     try {
       const response = await fetch(`https://rahi-lab.com/js/ajax/searchSpotify.php?${params}`, {
         method: 'GET',
