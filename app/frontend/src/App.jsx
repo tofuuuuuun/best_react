@@ -7,9 +7,9 @@ import { AlbumArtList } from './components/AlbumartList';
 import { ResetArea } from './components/ResetArea';
 
 export const App = () => {
-  const [isStart, setIsStart] = useState(false);
+  const [isSelectStart, setIsSelectStart] = useState(false);
   const [isModalOpen, setModalIsOpen] = useState(false);
-  const [addButtonFlg, setAddButtonFlg] = useState(false);
+  const [addButtonVisible, setAddButtonVisible] = useState(false);
   const [artistName, setArtistName] = useState('');
   const [type, setType] = useState('all');
   const [responseArtist, setResponseArtist] = useState([]);
@@ -18,11 +18,11 @@ export const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [albumArtList, setAlbumArtList] = useState([]);
   const [isCheckedArray, setIsCheckedArray] = useState([]);
-  const [resetButtonFlg, setResetButtonFlg] = useState(false);
+  const [resetButtonVisible, setResetButtonVisible] = useState(false);
 
-  const start = () => {
-    setIsStart(!isModalOpen);
-    setAddButtonFlg(true);
+  const selectStart = () => {
+    setIsSelectStart(!isSelectStart);
+    setAddButtonVisible(true);
   }
 
   const toggleModal = (toggleFlg) => {
@@ -58,12 +58,9 @@ export const App = () => {
     setType(typeValue);
     if (typeValue != 'all') {
       const filtered = responseAlbum.filter(album => album.album_type === typeValue);
-      setFilterResponseAlbum([]);
       setFilterResponseAlbum(filtered);
-      console.log(filtered);
     } else {
       setFilterResponseAlbum(responseAlbum);
-      console.log('66行目にはいった')
     }
     scrollTop();
   };
@@ -74,7 +71,7 @@ export const App = () => {
   }
 
   const addAlbumArt = (id, name, image, artist) => {
-    if (id === albumArtList.some((value) => value.id)) {
+    if (albumArtList.some((value) => value.id) === id) {
       deleteAlbum(id);
     } else {
       const newItem = [...albumArtList, { id: id, albumName: name, albumArt: image, albumArtist: artist }];
@@ -85,15 +82,15 @@ export const App = () => {
   const addIsChecked = (id) => {
     setIsCheckedArray((prevCheckedArray) => {
       // すでに登録されているIDの場合配列から削除して一覧からも削除
-      const flg = prevCheckedArray.some((value) => value.id === id);
-      if (!flg) {
+      const isSameAlbum = prevCheckedArray.some((value) => value.id === id);
+      if (!isSameAlbum) {
         return [...prevCheckedArray, { id: id }];
       } else {
         const deleteArray = albumArtList.filter(album => album.id !== id);
         setAlbumArtList(deleteArray);
         if (albumArtList.length < 10) {
-          setResetButtonFlg(false);
-          setAddButtonFlg(true);
+          setResetButtonVisible(false);
+          setAddButtonVisible(true);
         }
         return prevCheckedArray.filter(value => value.id !== id);
       }
@@ -105,10 +102,10 @@ export const App = () => {
     setAlbumArtList(deleteArray);
     const deleteIsChecked = isCheckedArray.filter(album => album.id !== id);
     setIsCheckedArray(deleteIsChecked);
-    setResetButtonFlg(false);
+    setResetButtonVisible(false);
     if (albumArtList.length <= 10) {
-      setResetButtonFlg(false);
-      setAddButtonFlg(true);
+      setResetButtonVisible(false);
+      setAddButtonVisible(true);
       setFilterResponseAlbum([]);
     }
   }
@@ -123,8 +120,8 @@ export const App = () => {
     clearModal();
     setAlbumArtList([]);
     setIsCheckedArray([])
-    setAddButtonFlg(true);
-    setResetButtonFlg(false);
+    setAddButtonVisible(true);
+    setResetButtonVisible(false);
   }
 
   const searchArtist = async (artistName) => {
@@ -214,11 +211,11 @@ export const App = () => {
 
   useEffect(() => {
     if (albumArtList.length === 10) {
-      setResetButtonFlg(true);
-      setAddButtonFlg(false);
+      setResetButtonVisible(true);
+      setAddButtonVisible(false);
       setModalIsOpen(false);
     }
-  }, [albumArtList]);
+  }, [albumArtList.length]);
 
 
   return (
@@ -227,46 +224,49 @@ export const App = () => {
       <main>
         <div className='contentWrapper'>
           <div className='l-contentWrapper'>
-            <Introduction
-              isStart={isStart}
-              start={start}
-            />
-            <AddButton
-              addButtonFlg={addButtonFlg}
-              isModalOpen={isModalOpen}
-              setModalIsOpen={setModalIsOpen}
-            />
-            <AlbumArtList
-              isStart={isStart}
-              albumArtList={albumArtList}
-              deleteAlbum={deleteAlbum}
-            />
+            {!isSelectStart && (
+              <Introduction selectStart={selectStart} />
+            )}
+            {addButtonVisible && (
+              <AddButton
+                isModalOpen={isModalOpen}
+                setModalIsOpen={setModalIsOpen}
+              />)}
+            {!isSelectStart && (
+              < AlbumArtList
+                isSelectStart={isSelectStart}
+                albumArtList={albumArtList}
+                deleteAlbum={deleteAlbum}
+              />
+            )}
           </div>
-          <ResetArea
-            resetButtonFlg={resetButtonFlg}
-            resetAlbumList={resetAlbumList}
-            handleCapture={handleCapture}
-          />
+          {resetButtonVisible && (
+            <ResetArea
+              resetAlbumList={resetAlbumList}
+              handleCapture={handleCapture}
+            />
+          )}
         </div>
-        <Modal
-          isModalOpen={isModalOpen}
-          toggleModal={toggleModal}
-          searchArtist={searchArtist}
-          inputArtistName={inputArtistName}
-          changeType={changeType}
-          type={type}
-          responseArtist={responseArtist}
-          searchAlbum={searchAlbum}
-          responseAlbum={responseAlbum}
-          filterResponseAlbum={filterResponseAlbum}
-          errorMessage={errorMessage}
-          addAlbumArt={addAlbumArt}
-          albumArtList={albumArtList}
-          addIsChecked={addIsChecked}
-          isCheckedArray={isCheckedArray}
-          clearModal={clearModal}
-          artistName={artistName}
-        />
+        {isModalOpen && (
+          <Modal
+            toggleModal={toggleModal}
+            searchArtist={searchArtist}
+            inputArtistName={inputArtistName}
+            changeType={changeType}
+            type={type}
+            responseArtist={responseArtist}
+            searchAlbum={searchAlbum}
+            responseAlbum={responseAlbum}
+            filterResponseAlbum={filterResponseAlbum}
+            errorMessage={errorMessage}
+            addAlbumArt={addAlbumArt}
+            albumArtList={albumArtList}
+            addIsChecked={addIsChecked}
+            isCheckedArray={isCheckedArray}
+            clearModal={clearModal}
+            artistName={artistName}
+          />
+        )}
       </main >
     </>
   )
