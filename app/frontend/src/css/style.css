@@ -165,6 +165,8 @@ input[type="checkbox"]{display: none;}
 .bg-gray { background-color: #ced3c8; }
 .bg-gray:hover{ background-color: #d6dccf; }
 
+.errorMessage{color: #ff0000;}
+
 .icon-close {
     display: inline-block;
     vertical-align: middle;

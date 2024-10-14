@@ -1,14 +1,10 @@
 export const AddButton = (props) => {
-    const { addButtonFlg, isModalOpen, setModalIsOpen } = props;
+    const { setModalIsOpen } = props;
     return (
-        <>
-            {addButtonFlg && (
-                <div className='albumAddButton'>
-                    <div className='l-albumArt albumAddButton addButton action' onClick={() => { setModalIsOpen(!isModalOpen) }}>
-                        <span className='icon-add'></span>
-                    </div>
-                </div>
-            )}
-        </>
+        <div className='albumAddButton'>
+            <button className='l-albumArt albumAddButton addButton action' onClick={() => { setModalIsOpen(prevState => !prevState) }}>
+                <span className='icon-add'></span>
+            </button>
+        </div>
     )
 }
